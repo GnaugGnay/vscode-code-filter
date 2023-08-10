@@ -1,8 +1,8 @@
 {
   "name": "code-filter",
   "displayName": "Code Filter",
-  "description": "",
-  "version": "1.0.2",
+  "description": "A simplest filter to help you browse code.",
+  "version": "1.0.3",
   "engines": {
     "vscode": "^1.81.0"
   },
