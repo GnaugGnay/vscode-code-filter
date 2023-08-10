@@ -9,3 +9,8 @@ A simplest filter to help you browse code.
 2. type `Filter Code` to find this extension and press enter to start use(bind a keyboard shortcut for better use).
 
 3. input any text and the result will show in the `Output Channel`.
+
+
+## TODO
+
+1. add jump back ability.
