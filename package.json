@@ -6,9 +6,15 @@
   "engines": {
     "vscode": "^1.81.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GnaugGnay/vscode-code-filter"
+  },
   "categories": [
     "Other"
   ],
+  "publisher": "TerryYang",
+  "icon": "logo.png",
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
