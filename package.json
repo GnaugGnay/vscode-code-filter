@@ -1,8 +1,8 @@
 {
   "name": "code-filter",
-  "displayName": "code filter",
+  "displayName": "Code Filter",
   "description": "",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "engines": {
     "vscode": "^1.81.0"
   },
@@ -21,7 +21,7 @@
     "commands": [
       {
         "command": "code-filter.simpleFilter",
-        "title": "Filter Code: Simple"
+        "title": "Code Filter: Simple"
       }
     ]
   },
