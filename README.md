@@ -10,7 +10,4 @@ A simplest filter to help you browse code.
 
 3. input any text and the result will show in the `Output Channel`.
 
-
-## TODO
-
-1. add jump back ability.
+4. (cmd/ctrl) + click the line index number to jump back to your source file.

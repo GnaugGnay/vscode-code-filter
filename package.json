@@ -2,9 +2,9 @@
   "name": "code-filter",
   "displayName": "Code Filter",
   "description": "A simplest filter to help you browse code.",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "engines": {
-    "vscode": "^1.81.0"
+    "vscode": "^1.80.0"
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,11 @@
       {
         "command": "code-filter.simpleFilter",
         "title": "Code Filter: Simple"
+      }
+    ],
+    "languages": [
+      {
+        "id": "code_filter_unique_id"
       }
     ]
   },

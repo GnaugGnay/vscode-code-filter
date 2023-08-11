@@ -1,9 +1,9 @@
 # Change Log
 
-All notable changes to the "code-filter" extension will be documented in this file.
+## 1.0.4 (August 11, 2023)
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+- Add clickable line index (jump back to certain position of source file).
 
-## [Unreleased]
+## 1.0.0 (August 10, 2023)
 
 - Initial release
