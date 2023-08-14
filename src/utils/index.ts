@@ -35,6 +35,8 @@ export function showFilteredDoc(channel: OutputChannel, currentDoc: TextDocument
     // 把行序号对齐
     const lastLine = [...res].pop() as FilterRes;
     const indexWidth = lastLine.index.length;
+
+    // 以`${序号} ${实际文本}`的形式输出至OutputChannel
     const strArr: string[] = res.map(el => {
       return `${el.index.padStart(indexWidth, ' ')} ${el.text}`;
     });
@@ -65,19 +67,19 @@ export function provideDocumentLinks(doc: TextDocument) {
   let res = [];
 
   for (let i = 0; i < doc.lineCount; i++) {
-    // range代表可以点击的范围
+    // range代表可以点击的范围，仅使前面序号可以点击
     const start = new Position(i, 0);
     const end = new Position(i, indexWidth);
     const range = new Range(start, end);
 
-    // 计算该行在源文件的实际行数
+    // 计算该行在源文件的实际行数，参考showFilteredDoc中的输出格式
     const lineText = doc.lineAt(i).text;
     const linNum = lineText.trim().split(' ')[0];
-    
-    // 添加链接
-    res.push(new DocumentLink(range, fileUri.with({
-      fragment: `L${linNum},0`
-    })));
+
+    // 文件寻回地址, “L10,0”代表跳到该文件第10行，0列
+    const jumpUri = fileUri.with({ fragment: `L${linNum},0` });
+
+    res.push(new DocumentLink(range, jumpUri));
   }
 
   return res;

@@ -2,17 +2,19 @@ import { window, commands, ExtensionContext, TextEditor, languages, OutputChanne
 
 import { provideDocumentLinks, showFilteredDoc } from './utils/index';
 
-// 初始化输出面板
-const channel = window.createOutputChannel('Code Filter', 'code_filter_unique_id');
+const COMMAND = 'code-filter.simpleFilter';
+const LANGUAGE = 'code_filter_unique_id';
+
+let channel: null | OutputChannel = null;			// 结果输出面板
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
-
-	console.log('Congratulations, your extension "code-filter" is now active!');
+	// 初始化输出面板
+	channel = window.createOutputChannel('Code Filter', LANGUAGE);
 
 	// Filter弹窗以及结果显示
-	const disposable = commands.registerTextEditorCommand('code-filter.simpleFilter', async (textEditor: TextEditor) => {
+	const commandDisposable = commands.registerTextEditorCommand(COMMAND, async (textEditor: TextEditor) => {
 
 		// 输入框弹窗
 		const result = await window.showInputBox({
@@ -20,7 +22,7 @@ export function activate(context: ExtensionContext) {
 			placeHolder: 'Input your text to filter.'
 		});
 
-		if (result && result != '') {
+		if (result && result != '' && channel != null) {
 			// 显示结果
 			showFilteredDoc(channel, textEditor.document, result);
 		}
@@ -28,11 +30,11 @@ export function activate(context: ExtensionContext) {
 
 	// 对上面的Output的结果做路径寻回
 	const documentLinkProviderDisposable = languages.registerDocumentLinkProvider(
-		{ language: 'code_filter_unique_id' },
+		{ language: LANGUAGE },
 		{ provideDocumentLinks: provideDocumentLinks }
 	)
 
-	context.subscriptions.push(disposable);
+	context.subscriptions.push(commandDisposable);
 	context.subscriptions.push(documentLinkProviderDisposable);
 }
 
