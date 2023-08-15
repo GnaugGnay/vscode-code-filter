@@ -1,14 +1,66 @@
-import { DocumentLink, OutputChannel, Position, Range, TextDocument, window } from 'vscode';
+import { DocumentLink, ExtensionContext, OutputChannel, Position, QuickPickItem, Range, TextDocument, window } from 'vscode';
 
 import CurrentFilter from './CurrentFilter';
+import { STATE_KET } from './constants';
 import { FilterRes } from '../types';
+
+/**
+ * 显示一个选择框给用户
+ * @param context 扩展的上下文，主要用到里面的全局存储对象
+ */
+export function showQuickPick(context: ExtensionContext) {
+  // 先获取历史搜索的项，并构建成选择框要的结构
+  const histories: string[] = context.globalState.get(STATE_KET) || [];
+  const historyItems: QuickPickItem[] = histories.map(el => {
+    return {
+      label: el,
+      alwaysShow: true,
+      description: 'History'
+    }
+  });
+
+  return new Promise<string>((resolve, _reject) => {
+    // 初始化选择框
+    const qp = window.createQuickPick();
+		qp.placeholder = 'Input or select a text to start filter';
+		qp.items = historyItems;
+
+    // 选择框输入的文本变化
+		qp.onDidChangeValue(text => {
+			let items = [...historyItems];
+			text != '' &&	items.unshift({ label: text });
+
+			qp.items = items;
+		});
+
+    // 用户最终选择了某项
+		qp.onDidChangeSelection(selection => {
+      const item = selection[0];
+      let res = '';
+			if (item) {
+        // 记录新添加的历史项，最多5项
+				const newHistories = [item, ...historyItems].map(el => el.label).slice(0, 5);
+				context.globalState.update(STATE_KET, newHistories);
+
+        res = item.label;
+			}
+
+      resolve(res);
+		});
+
+    // 选择框隐藏时销毁
+		qp.onDidHide(qp.dispose);
+
+		qp.show();
+  });
+}
 
 /**
  * @param channel output面板
  * @param currentDoc 当前正在激活的文档
  * @param key 用户输入的过滤字符串
  */
-export function showFilteredDoc(channel: OutputChannel, currentDoc: TextDocument, key: string): void {
+export function showFilteredDoc(channel: OutputChannel, currentDoc: TextDocument, key: string) {
   // 1. 先构造初步结果
   let res: FilterRes[] = [];
   for (let i = 0; i < currentDoc.lineCount; i++) {
