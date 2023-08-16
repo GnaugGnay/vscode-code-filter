@@ -37,13 +37,16 @@ export function showQuickPick(context: ExtensionContext) {
 		qp.onDidChangeSelection(selection => {
       const item = selection[0];
       let res = '';
-			if (item) {
-        // 记录新添加的历史项，最多5项
-				const newHistories = [item, ...historyItems].map(el => el.label).slice(0, 5);
-				context.globalState.update(STATE_KET, newHistories);
+      if (item) {
+        // 记录新添加的历史项
+        const newHistories = [item.label, ...histories]
+          .filter((el, i, arr) => arr.indexOf(el) == i)   // 去重
+          .slice(0, 5);                                   // 最多保留5项
+
+        context.globalState.update(STATE_KET, newHistories);
 
         res = item.label;
-			}
+      }
 
       resolve(res);
 		});
