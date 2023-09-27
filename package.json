@@ -2,7 +2,7 @@
   "name": "code-filter",
   "displayName": "Code Filter",
   "description": "A simplest filter to help you browse code.",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "engines": {
     "vscode": "^1.81.0"
   },
@@ -36,7 +36,8 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package"
   },
   "devDependencies": {
     "@types/vscode": "^1.81.0",

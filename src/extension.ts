@@ -13,12 +13,8 @@ export function activate(context: ExtensionContext) {
 
 	// Filter弹窗以及结果显示
 	const commandDisposable = commands.registerTextEditorCommand(COMMAND, async (textEditor: TextEditor) => {
-
-		// // 输入框弹窗
-		// const result = await window.showInputBox({
-		// 	value: '',
-		// 	placeHolder: 'Input your text to filter.'
-		// });
+		// 避免套娃使用
+		if (textEditor.document.languageId == LANGUAGE) return;
 
 		// 带选项的输入框
 		const result = await showQuickPick(context);

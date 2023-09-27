@@ -1,8 +1,12 @@
 # Change Log
 
-## 1.0.4 (August 16, 2023)
+## 1.0.6 (September 27, 2023)
 
-- Add history record
+- Avoid recursive usage.
+
+## 1.0.5 (August 16, 2023)
+
+- Add history record.
 
 ## 1.0.4 (August 11, 2023)
 
@@ -10,4 +14,4 @@
 
 ## 1.0.0 (August 10, 2023)
 
-- Initial release
+- Initial release.
