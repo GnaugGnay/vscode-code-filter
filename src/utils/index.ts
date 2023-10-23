@@ -16,7 +16,7 @@ export function showQuickPick(context: ExtensionContext) {
       label: el,
       alwaysShow: true,
       description: 'History'
-    }
+    };
   });
 
   return new Promise<string>((resolve, _reject) => {
@@ -131,7 +131,7 @@ export function provideDocumentLinks(doc: TextDocument) {
     return [];
   }
 
-  let res = [];
+  let res: DocumentLink[] = [];
 
   for (let i = 0; i < doc.lineCount; i++) {
     // range代表可以点击的范围，仅使前面序号可以点击

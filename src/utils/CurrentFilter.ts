@@ -12,7 +12,7 @@ class CurrentFilter {
       fileUri: null,
       indexWidth: 0,
       emptyResult: false
-    }
+    };
   }
 
   public static getInstance() {
