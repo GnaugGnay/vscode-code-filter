@@ -1,7 +1,7 @@
 import { DocumentLink, ExtensionContext, OutputChannel, Position, QuickPickItem, Range, TextDocument, window, workspace } from 'vscode';
 
 import CurrentFilter from './CurrentFilter';
-import { STATE_KET } from './constants';
+import { CONFIG, STATE_KET } from './constants';
 import { FilterRes } from '../types';
 
 /**
@@ -90,7 +90,7 @@ export function showFilteredDoc(channel: OutputChannel, currentDoc: TextDocument
   } 
   
   // 获取用户配置，若不显示寻回序号，直接返回结果
-  const showJumpLineIndex = workspace.getConfiguration().get('result.showJumpLineIndex');
+  const showJumpLineIndex = workspace.getConfiguration().get(CONFIG.showJumpLineIndex);
   if (showJumpLineIndex === false) {
     CurrentFilter.set({ indexWidth: 0 });
 

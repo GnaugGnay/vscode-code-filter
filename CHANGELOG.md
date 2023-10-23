@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.0.7 (October 23, 2023)
+## 1.0.8 (October 23, 2023)
 
 - Add settings to hide line indexes.
 

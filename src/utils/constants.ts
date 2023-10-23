@@ -6,3 +6,8 @@ export const LANGUAGE = 'code_filter_unique_id';
 
 // 存储在globalState中数据的键名
 export const STATE_KET = 'code_filter_global_state';
+
+// 插件提供给用户的配置项
+export const CONFIG = {
+  showJumpLineIndex: 'code-filter.showJumpLineIndex',   // 是否显示可点击行序号
+}
