@@ -13,15 +13,11 @@ export function activate(context: ExtensionContext) {
 
 	// Filter弹窗以及结果显示
 	const commandDisposable = commands.registerTextEditorCommand(COMMAND, async (textEditor: TextEditor) => {
-		// 避免套娃使用
-		if (textEditor.document.languageId == LANGUAGE) return;
+		if (textEditor.document.languageId == LANGUAGE) return;		// 避免套娃使用
 
-		// 带选项的输入框
-		const result = await showQuickPick(context);
-
+		const result = await showQuickPick(context);							// 用户输入
 		if (result && result != '' && channel != null) {
-			// 显示结果
-			showFilteredDoc(channel, textEditor.document, result);
+			showFilteredDoc(channel, textEditor.document, result);	// 显示结果
 		}
 	});
 

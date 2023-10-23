@@ -2,7 +2,7 @@
   "name": "code-filter",
   "displayName": "Code Filter",
   "description": "A simplest filter to help you browse code.",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "engines": {
     "vscode": "^1.81.0"
   },
@@ -28,7 +28,17 @@
       {
         "id": "code_filter_unique_id"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Code Filter",
+      "properties": {
+        "result.showJumpLineIndex": {
+          "type": "boolean",
+          "default": true,
+          "description": "wether shows line indexes in final result."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

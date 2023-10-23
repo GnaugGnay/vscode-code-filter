@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.7 (October 23, 2023)
+
+- Add settings to hide line indexes.
+
 ## 1.0.6 (September 27, 2023)
 
 - Avoid recursive usage.
