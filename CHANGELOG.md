@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.1.0 (March 20, 2024)
+
+- You can filter through all tabs now!
+- Add new setting.
+
 ## 1.0.8 (October 23, 2023)
 
 - Add settings to hide line indexes.
