@@ -22,6 +22,10 @@
       {
         "command": "code-filter.simpleFilter",
         "title": "Code Filter: Simple"
+      },
+      {
+        "command": "code-filter.openedDocFilter",
+        "title": "Code Filter: Through all opened documents"
       }
     ],
     "languages": [
@@ -32,10 +36,10 @@
     "configuration": {
       "title": "Code Filter",
       "properties": {
-        "code-filter.showJumpLineIndex": {
+        "code-filter.pureResult": {
           "type": "boolean",
-          "default": true,
-          "description": "wether shows line indexes in final result."
+          "default": false,
+          "description": "wether shows matched lines only."
         }
       }
     }

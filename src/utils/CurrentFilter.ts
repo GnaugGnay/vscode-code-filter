@@ -9,8 +9,7 @@ class CurrentFilter {
 
   constructor() {
     this.data = {
-      fileUri: null,
-      indexWidth: 0,
+      resultInfos: [],
       emptyResult: false
     };
   }
@@ -23,7 +22,7 @@ class CurrentFilter {
     return CurrentFilter.instance;
   }
 
-  set(params: Partial<CurrentFilterData>) {
+  set(params: CurrentFilterData) {
     Object.assign(this.data, params);
   }
 

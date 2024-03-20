@@ -2,7 +2,7 @@ import { DocumentLink, ExtensionContext, OutputChannel, Position, QuickPickItem,
 
 import CurrentFilter from './CurrentFilter';
 import { CONFIG, STATE_KET } from './constants';
-import { FilterRes } from '../types';
+import { InitialRes, LineRes } from '../types';
 
 /**
  * 显示一个选择框给用户
@@ -59,89 +59,133 @@ export function showQuickPick(context: ExtensionContext) {
 }
 
 /**
- * @param channel output面板
- * @param currentDoc 当前正在激活的文档
- * @param key 用户输入的过滤字符串
+ * 对单个文档进行初步过滤
  */
-export function showFilteredDoc(channel: OutputChannel, currentDoc: TextDocument, key: string) {
-  // 1. 先构造初步结果
-  let res: FilterRes[] = [];
-  for (let i = 0; i < currentDoc.lineCount; i++) {
-    const lineText = currentDoc.lineAt(i).text;
+const getInitialRes = (doc: TextDocument, key: string): InitialRes => {
+  let matchs: LineRes[] = [];
+  let indexWidth = 0;
+
+  for (let i = 0; i < doc.lineCount; i++) {
+    const lineText = doc.lineAt(i).text;
 
     if (lineText.includes(key)) {
-      res.push({
+      matchs.push({
         index: i + 1 + '',
         text: lineText.trim()
       });
     }
   }
 
-  // 2. 根据上一步骤结果显示信息
+  if (matchs.length) {
+    const lastLine = [...matchs].pop() as LineRes;
+    indexWidth = lastLine.index.length;
+  }
+
+  return {
+    name: doc.fileName,
+    fileUri: doc.uri,
+    matchs,
+    indexWidth
+  }
+}
+
+const showChannel = (channel: OutputChannel, cotent: string) => {
   channel.clear();
+  channel.append(cotent);
+  channel.show();
+}
+
+/**
+ * @param channel output面板
+ * @param docs 需要检索的文档
+ * @param key 用户输入的过滤字符串
+ */
+export function showResult(channel: OutputChannel, docs: TextDocument[], key: string) {
+  let res: InitialRes[] = docs.map(doc => getInitialRes(doc, key));
+
+  res = res.filter(el => el.matchs.length);
 
   // 空结果，返回提示
   if (res.length == 0) {
-    CurrentFilter.set({ emptyResult: true });
+    CurrentFilter.set({ emptyResult: true, resultInfos: [] });
 
-    channel.append('No matched lines found.');
-    channel.show();
-    return;
-  } 
-  
-  // 获取用户配置，若不显示寻回序号，直接返回结果
-  const showJumpLineIndex = workspace.getConfiguration().get(CONFIG.showJumpLineIndex);
-  if (showJumpLineIndex === false) {
-    CurrentFilter.set({ indexWidth: 0 });
-
-    channel.append(res.map(el => el.text).join('\n'));
-    channel.show();
-
+    showChannel(channel, 'No matched lines found.');
     return;
   }
 
-  // 把行序号对齐
-  const lastLine = [...res].pop() as FilterRes;
-  const indexWidth = lastLine.index.length;
+  // 获取用户配置，是否显示纯净的过滤结果
+  const pureResult = workspace.getConfiguration().get(CONFIG.pureResult);
+  if (pureResult === true) {
+    CurrentFilter.set({ emptyResult: false, resultInfos: [] });
 
-  // 以`${序号} ${实际文本}`的形式输出至OutputChannel
-  const strArr: string[] = res.map(el => {
-    return `${el.index.padStart(indexWidth, ' ')} ${el.text}`;
+    let content: string[] = [];
+
+    res.forEach(el => {
+      el.matchs.forEach(match => {
+        content.push(match.text);
+      });
+    });
+
+    showChannel(channel, content.join('\n'));
+    return;
+  }
+
+  let content: string[] = [];
+
+  res.forEach(el => {
+    const { name, indexWidth, matchs } = el;
+    
+    content.push(name);
+
+    matchs.forEach(match => {
+      content.push(`${match.index.padStart(indexWidth, ' ')} ${match.text}`);
+    });
+
+    content.push('');   // 两个文件的搜索结果之间加个空行
   });
 
-  // 记录当前的一些信息，供provideDocumentLinks使用
-  CurrentFilter.set({
-    fileUri: currentDoc.uri,
-    indexWidth: indexWidth,
-    emptyResult: false
+  CurrentFilter.set({ 
+    emptyResult: false, 
+    resultInfos: res.map(el => {
+      return {
+        fileUri: el.fileUri,
+        indexWidth: el.indexWidth
+      }
+    })
   });
 
-  channel.append(strArr.join('\n'));
-
-  channel.show();
+  showChannel(channel, content.join('\n'));
 }
 
 /**
  * 给输出面板的行序号提供文件定位寻回功能
  */
 export function provideDocumentLinks(doc: TextDocument) {
-  const { emptyResult, fileUri, indexWidth } = CurrentFilter.get();
+  const { emptyResult, resultInfos } = CurrentFilter.get();
 
-  if (emptyResult || fileUri == null || indexWidth == 0) {
+  if (emptyResult || !resultInfos.length) {
     return [];
   }
 
+  let j = -1;       // 记录当前是第几个文件
   let res: DocumentLink[] = [];
 
   for (let i = 0; i < doc.lineCount; i++) {
+    // 计算该行在源文件的实际行数，参考showFilteredDoc中的输出格式
+    const lineText = doc.lineAt(i).text;
+    const linNum = lineText.trim().split(' ')[0];
+
+    // 到下一个文件的结果
+    if (isNaN(Number(linNum))) {
+      j += 1;
+      continue;
+    }
+
+    const { indexWidth, fileUri } = resultInfos[j];
     // range代表可以点击的范围，仅使前面序号可以点击
     const start = new Position(i, 0);
     const end = new Position(i, indexWidth);
     const range = new Range(start, end);
-
-    // 计算该行在源文件的实际行数，参考showFilteredDoc中的输出格式
-    const lineText = doc.lineAt(i).text;
-    const linNum = lineText.trim().split(' ')[0];
 
     // 文件寻回地址, “L10,0”代表跳到该文件第10行，0列
     const jumpUri = fileUri.with({ fragment: `L${linNum},0` });
