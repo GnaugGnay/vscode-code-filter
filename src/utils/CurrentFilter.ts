@@ -1,7 +1,7 @@
 import { CurrentFilterData } from '../types';
 
 /**
- * 记录当前过滤的一些信息，单例
+ * 记录当前过滤的一些信息
  */
 class CurrentFilter {
   private static instance: CurrentFilter;

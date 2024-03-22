@@ -11,6 +11,6 @@ export const LANGUAGE = 'code_filter_unique_id';
 export const STATE_KET = 'code_filter_global_state';
 
 // 插件提供给用户的配置项
-export const CONFIG = {
-  pureResult: 'code-filter.pureResult'
-}
+export enum USER_CONFIG {
+  PURE_RESULT = 'code-filter.pureResult'
+} 

@@ -1,7 +1,8 @@
 import { DocumentLink, ExtensionContext, OutputChannel, Position, QuickPickItem, Range, TextDocument, window, workspace } from 'vscode';
 
+import OutputManager from './OutputManager';
 import CurrentFilter from './CurrentFilter';
-import { CONFIG, STATE_KET } from './constants';
+import { USER_CONFIG, STATE_KET } from './constants';
 import { InitialRes, LineRes } from '../types';
 
 /**
@@ -25,7 +26,7 @@ export function showQuickPick(context: ExtensionContext) {
 		qp.placeholder = 'Input or select a text to start filter';
 		qp.items = historyItems;
 
-    // 选择框输入的文本变化
+    // 选择框输入的文本变化，动态新增item
 		qp.onDidChangeValue(text => {
 			let items = [...historyItems];
 			text != '' &&	items.unshift({ label: text });
@@ -89,18 +90,11 @@ const getInitialRes = (doc: TextDocument, key: string): InitialRes => {
   }
 }
 
-const showChannel = (channel: OutputChannel, cotent: string) => {
-  channel.clear();
-  channel.append(cotent);
-  channel.show();
-}
-
 /**
- * @param channel output面板
  * @param docs 需要检索的文档
  * @param key 用户输入的过滤字符串
  */
-export function showResult(channel: OutputChannel, docs: TextDocument[], key: string) {
+export function showResult(docs: TextDocument[], key: string) {
   let res: InitialRes[] = docs.map(doc => getInitialRes(doc, key));
 
   res = res.filter(el => el.matchs.length);
@@ -109,12 +103,12 @@ export function showResult(channel: OutputChannel, docs: TextDocument[], key: st
   if (res.length == 0) {
     CurrentFilter.set({ emptyResult: true, resultInfos: [] });
 
-    showChannel(channel, 'No matched lines found.');
+    OutputManager.show('No matched lines found.');
     return;
   }
 
   // 获取用户配置，是否显示纯净的过滤结果
-  const pureResult = workspace.getConfiguration().get(CONFIG.pureResult);
+  const pureResult = workspace.getConfiguration().get<boolean>(USER_CONFIG.PURE_RESULT);
   if (pureResult === true) {
     CurrentFilter.set({ emptyResult: false, resultInfos: [] });
 
@@ -126,7 +120,7 @@ export function showResult(channel: OutputChannel, docs: TextDocument[], key: st
       });
     });
 
-    showChannel(channel, content.join('\n'));
+    OutputManager.show(content.join('\n'));
     return;
   }
 
@@ -154,7 +148,7 @@ export function showResult(channel: OutputChannel, docs: TextDocument[], key: st
     })
   });
 
-  showChannel(channel, content.join('\n'));
+  OutputManager.show(content.join('\n'));
 }
 
 /**
